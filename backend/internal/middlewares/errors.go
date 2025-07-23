@@ -24,7 +24,7 @@ func ErrorHandler(log *slog.Logger) gin.HandlerFunc {
 				last = errors.Unwrap(last)
 			}
 
-			log.Error("ERR: ", err.Error())
+			log.Error("ERR", "error", err.Error())
 
 			c.AbortWithStatusJSON(statusCode, model.ErrorResponse{
 				Error: last.Error(),

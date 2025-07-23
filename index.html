@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prosto+One&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+<section id="homepage" class="homepage">
+  <div class="particle-container">
+    <div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div>
+  </div>
+  <div class="home-content">
+    <h1 class="home-title">Python Practice</h1>
+    <p class="home-tagline">Real-time coding &amp; feedback</p>
+    <button id="start-chat-btn" class="home-btn">Let’s Code!</button>
+
+    <div class="home-features">
+      <div class="feature-item"><div class="feature-icon">📝</div><div class="feature-label">Live Tasks</div></div>
+      <div class="feature-item"><div class="feature-icon">💡</div><div class="feature-label">Smart Hints</div></div>
+      <div class="feature-item"><div class="feature-icon">📊</div><div class="feature-label">Progress Stats</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="top-bar hidden">
+  <div class="logo">🐍 Python Practice</div>
+  <div class="right-controls">
+    <div id="profile" class="profile">
+      <button id="score-btn" class="score-btn hidden">
+        Score: <span id="score-count">0</span>
+      </button>
+      <button id="notification-settings-btn" class="notification-btn hidden">🔔</button>
+      <div id="user-avatar" class="user-avatar">👤</div>
+      <div id="user-name" class="user-name"></div>
+      <button id="logout-btn" class="logout">Log out</button>
+    </div>
+    <button id="login-btn" class="login-btn">Log in</button>
+  </div>
+</div>
+
+<div id="admin-banner" class="admin-banner hidden">
+  You are logged in as an administrator
+</div>
+
+<div class="layout hidden">
+  <div class="sidebar">
+    <h3>📘 Course Topics</h3>
+    <button id="upload-syllabus-btn" class="upload-btn" style="display:none">Upload syllabus</button>
+    <input type="file" id="syllabus-file" accept=".txt" style="display:none" />
+    <ul id="topics-list"></ul>
+  </div>
+
+  <div class="chat-area">
+    <div class="quote">💡 “Code is poetry in logic”</div>
+    <div class="messages" id="messages"></div>
+    <div class="input-box">
+      <textarea id="user-input" placeholder="Let's code!"></textarea>
+      <button id="submit-code-btn">Send code</button>
+    </div>
+  </div>
+
+  <div class="extra">
+    <h3>🎯 Difficulty</h3>
+    <div id="difficulty-buttons">
+      <button onclick="chooseDifficulty('beginner')">🟢 Beginner</button>
+      <button onclick="chooseDifficulty('medium')">🟡 Medium</button>
+      <button onclick="chooseDifficulty('hard')">🔴 Hard</button>
+    </div>
+    <div class="hint-wrapper">
+      <button id="hint-btn" class="hint-btn" disabled>💡 Hint</button>
+      <span id="hint-help" class="hint-help">?</span>
+    </div>
+  </div>
+</div>
+
+<div id="login-modal" class="modal hidden">
+  <div id="score-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="score-close" class="modal-close">&times;</span>
+      <h2 style="text-align:center;margin-top:0">🏆 Your Progress</h2>
+      <p id="score-text"
+         style="font-size:24px;text-align:center;margin:20px 0">0</p>
+    </div>
+  </div>
+  <div class="modal-content">
+    <span id="modal-close" class="modal-close">&times;</span>
+
+    <div class="tab-selector">
+      <button id="user-tab"  class="tab active">User</button>
+    </div>
+
+    <form id="login-form" class="login-form">
+      <input type="text"     id="li-identifier" placeholder="Email or Nickname" required />
+      <input type="password" id="li-password"   placeholder="Password"        required />
+      <button type="submit"  class="login-submit">Log in</button>
+      <div id="login-error"  class="attempts-info"></div>
+      <p class="switch-text">Don't have an account?
+        <span id="go-signup" class="link">Sign up!</span></p>
+    </form>
+
+    <form id="signup-form" class="login-form hidden">
+      <input type="text"     id="su-name"     placeholder="Name / Nickname" required />
+      <input type="email"    id="su-email"    placeholder="Email"           required />
+      <input type="password" id="su-password" placeholder="Password"        required />
+      <div id="su-error" class="attempts-info"></div>
+      <button type="submit"  class="login-submit">Create account</button>
+      <p class="switch-text">Already have an account?
+        <span id="go-login" class="link">Log in!</span></p>
+    </form>
+  </div>
+</div>
+
+<!-- Notification Settings Modal -->
+<div id="notification-settings-modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="notification-settings-close" class="modal-close">&times;</span>
+    <h2 style="text-align:center;margin-top:0">🔔 Notification Settings</h2>
+    
+    <form id="notification-settings-form" class="notification-form">
+      <div class="setting-group">
+        <label>
+          <input type="checkbox" id="notification-enabled" />
+          Enable notifications
+        </label>
+      </div>
+      
+      <div class="setting-group">
+        <label for="notification-time">Notification time (24-hour format):</label>
+        <input type="text" id="notification-time" value="09:00" placeholder="HH:MM" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" />
+      </div>
+      
+      <div class="setting-group">
+        <label>Notification days:</label>
+        <div class="day-checkboxes">
+          <label><input type="checkbox" value="1" checked /> Mon</label>
+          <label><input type="checkbox" value="2" checked /> Tue</label>
+          <label><input type="checkbox" value="3" checked /> Wed</label>
+          <label><input type="checkbox" value="4" checked /> Thu</label>
+          <label><input type="checkbox" value="5" checked /> Fri</label>
+          <label><input type="checkbox" value="6" /> Sat</label>
+          <label><input type="checkbox" value="7" /> Sun</label>
+        </div>
+      </div>
+      
+      <button type="submit" class="login-submit">Save Settings</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+<script src="/config.js"></script>
+<script src="/script.js" defer></script>
+</body>
+</html>

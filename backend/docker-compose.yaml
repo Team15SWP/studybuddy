@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  study_buddy_db:
+    image: postgres:16
+    container_name: study_buddy_db
+    environment:
+      POSTGRES_DB: db_study_buddy
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - study-buddy-data:/var/lib/postgresql/data
+    networks:
+      - study_buddy_net
+
+#  study_buddy_api:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: study_buddy_api
+#    depends_on:
+#      - study_buddy_db
+#    environment:
+#      CONFIG_PATH: config/local.yaml
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - study_buddy_net
+
+volumes:
+  study-buddy-data:
+
+networks:
+  study_buddy_net:
+    driver: bridge

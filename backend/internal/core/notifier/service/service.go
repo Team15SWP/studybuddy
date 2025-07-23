@@ -48,7 +48,7 @@ type NotifyProvider interface {
 func (n *NotifyService) NotifyUsers(ctx context.Context, now *time.Time) error {
 	n.log.Info("NotifyUsers start")
 	userIDs, err := n.repo.GetUserIDs(ctx, now)
-	n.log.Info("userIDs", len(userIDs), userIDs)
+	n.log.Info("userIDs", "count", len(userIDs), "ids", userIDs)
 	users, err := n.repo.GetAllUsersEmail(ctx, userIDs)
 	if err != nil {
 		return fmt.Errorf("n.repo.GetAllUsersEmail: %w", err)

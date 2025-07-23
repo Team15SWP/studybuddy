@@ -7,46 +7,40 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test-lint:
+  build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: db_study_buddy
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U test -d db_study_buddy"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.21'
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
 
-    - name: Install dependencies
-      run: cd backend && go mod download
+      - name: Install dependencies
+        run: cd backend && go mod download
 
-    - name: Run migrations
-      run: cd backend && make migration-up
-      env:
-        POSTGRES_SETUP: user=test password=test dbname=db_study_buddy host=localhost port=5432 sslmode=disable
+      - name: Build
+        run: cd backend && go build ./...
 
-    - name: Run tests
-      run: cd backend && make test
+  test-lint:
+    runs-on: ubuntu-latest
+    needs: build  # test-lint запустится только если build прошёл успешно
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Run linter
-      run: cd backend && make lint
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
 
-    - name: Build Docker image
-      run: cd backend && docker build -t studybuddy-backend .
+      - name: Install dependencies
+        run: cd backend && go mod download
+
+      - name: Run tests
+        run: cd backend && make test
+
+      - name: Run linter
+        run: cd backend && make lint

@@ -86,7 +86,9 @@ func extractCourseScheduleFromUpload(fileHeader *multipart.FileHeader) ([]model.
 	if err != nil {
 		return nil, err
 	}
-	buf.ReadFrom(textReader)
+	if _, err := buf.ReadFrom(textReader); err != nil {
+		return nil, err
+	}
 	raw := buf.String()
 
 	re := regexp.MustCompile(`(?i)week\s*[-:]?\s*(\d{1,2})\s*[:-]?\s*([A-Za-z0-9 ,.\-–—()\[\]]+)`)

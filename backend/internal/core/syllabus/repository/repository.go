@@ -78,7 +78,11 @@ func (s *SyllabusRepo) DeleteSyllabus(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("transaction begin: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		if rbErr := tx.Rollback(ctx); rbErr != nil && rbErr.Error() != "pgx: tx is closed" {
+			fmt.Printf("tx.Rollback error: %v\n", rbErr)
+		}
+	}()
 
 	_, err = tx.Exec(ctx, "DELETE FROM syllabus")
 	if err != nil {
@@ -102,7 +106,11 @@ func (s *SyllabusRepo) SaveSyllabus(ctx context.Context, syllabus []model.Schedu
 	if err != nil {
 		return nil, fmt.Errorf("transaction begin: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		if rbErr := tx.Rollback(ctx); rbErr != nil && rbErr.Error() != "pgx: tx is closed" {
+			fmt.Printf("tx.Rollback error: %v\n", rbErr)
+		}
+	}()
 
 	_, err = tx.Exec(ctx, "DELETE FROM syllabus")
 	if err != nil {

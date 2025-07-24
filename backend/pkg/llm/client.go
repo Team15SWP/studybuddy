@@ -29,8 +29,8 @@ func NewOpenRouterClient(openAi *config.OpenAI) *OpenRouterClient {
 	return &OpenRouterClient{
 		APIKey:     openAi.ApiKeys[openAi.Ind],
 		OpenAi:     openAi,
-		DisabledAt: make([]*time.Time, len(openAi.ApiKeys), len(openAi.ApiKeys)),
-		Count:      make([]int, len(openAi.ApiKeys), len(openAi.ApiKeys)),
+		DisabledAt: make([]*time.Time, len(openAi.ApiKeys)),
+		Count:      make([]int, len(openAi.ApiKeys)),
 	}
 }
 
@@ -42,7 +42,10 @@ func (c *OpenRouterClient) Complete(ctx context.Context, prompt string) (string,
 		},
 	}
 
-	bodyJSON, _ := json.Marshal(body)
+	bodyJSON, err := json.Marshal(body)
+	if err != nil {
+		return "", err
+	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://openrouter.ai/api/v1/chat/completions", bytes.NewReader(bodyJSON))
 	if err != nil {

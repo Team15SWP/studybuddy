@@ -77,9 +77,13 @@ func (a *AuthRepo) CreateUser(ctx context.Context, username, email, password str
 	}
 	defer func() {
 		if err != nil {
-			_ = tx.Rollback(ctx)
+			if rbErr := tx.Rollback(ctx); rbErr != nil {
+				fmt.Printf("tx.Rollback error: %v\n", rbErr)
+			}
 		} else {
-			_ = tx.Commit(ctx)
+			if cmErr := tx.Commit(ctx); cmErr != nil {
+				fmt.Printf("tx.Commit error: %v\n", cmErr)
+			}
 		}
 	}()
 

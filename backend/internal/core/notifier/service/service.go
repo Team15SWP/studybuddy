@@ -49,9 +49,9 @@ func (n *NotifyService) NotifyUsers(ctx context.Context, now *time.Time) error {
 	n.log.Info("NotifyUsers start")
 	userIDs, err := n.repo.GetUserIDs(ctx, now)
 	n.log.Info("userIDs", "count", len(userIDs), "ids", userIDs)
-	users, err := n.repo.GetAllUsersEmail(ctx, userIDs)
-	if err != nil {
-		return fmt.Errorf("n.repo.GetAllUsersEmail: %w", err)
+	users, getUsersErr := n.repo.GetAllUsersEmail(ctx, userIDs)
+	if getUsersErr != nil {
+		return fmt.Errorf("n.repo.GetAllUsersEmail: %w", getUsersErr)
 	}
 	for _, user := range users {
 		n.log.Info("user info", user.Name, user.Email)
@@ -63,9 +63,9 @@ func (n *NotifyService) NotifyUsers(ctx context.Context, now *time.Time) error {
 <p>See you inside,<br>The Study Buddy Team</p>
 `
 	for _, user := range users {
-		err = n.SendMessage(ctx, messageBody, user.Email, user.Name)
-		if err != nil {
-			n.log.Error(fmt.Sprintf("n.SendMessage: %v", err))
+		sendErr := n.SendMessage(ctx, messageBody, user.Email, user.Name)
+		if sendErr != nil {
+			n.log.Error(fmt.Sprintf("n.SendMessage: %v", sendErr))
 		}
 	}
 	return nil

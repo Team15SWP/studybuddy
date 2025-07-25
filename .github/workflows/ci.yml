@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -13,35 +13,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Бэкенд (Go)
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
-      - name: Install dependencies
+          
+      - name: Install backend dependencies
         run: cd backend && go mod download
-
-      - name: Build
+        
+      - name: Build backend
         run: cd backend && go build ./...
-
+        
+      # Фронтенд (просто копирование файлов, без сборки)
+      - name: Prepare frontend
+        run: |
+          mkdir -p backend/public
+          cp -R frontend/* backend/public/
+          echo "✅ Frontend ready!" 
+  
   test-lint:
     runs-on: ubuntu-latest
-    needs: build  
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
-      - name: Install dependencies
-        run: cd backend && go mod download
-
+          
       - name: Run tests
         run: cd backend && make test
-
+        
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:

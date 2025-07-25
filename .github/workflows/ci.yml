@@ -21,8 +21,14 @@ jobs:
       - name: Install dependencies
         run: cd backend && go mod download
 
-      - name: Build
+      - name: Build backend
         run: cd backend && go build ./...
+
+      - name: Install frontend deps
+        run: cd frontend && npm ci
+
+      - name: Build frontend
+        run: cd frontend && npm run build
 
   test-lint:
     runs-on: ubuntu-latest
